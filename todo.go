@@ -2,6 +2,7 @@ package todoapi
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	todo "todo/gen/todo"
@@ -10,12 +11,14 @@ import (
 // todo service example implementation.
 // The example methods log the requests and return zero values.
 type todosrvc struct {
+	db     *Sql
 	logger *log.Logger
 }
 
 // NewTodo returns the todo service implementation.
-func NewTodo(logger *log.Logger) todo.Service {
-	return &todosrvc{logger}
+func NewTodo(db *sql.DB, logger *log.Logger) todo.Service {
+	sql := NewSqlDB(db)
+	return &todosrvc{sql, logger}
 }
 
 // Hello implements hello.
