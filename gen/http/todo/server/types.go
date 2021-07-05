@@ -85,6 +85,14 @@ func NewUpdatePayload(body *UpdateRequestBody, id int) *todo.UpdatePayload {
 	return v
 }
 
+// NewDeletePayload builds a todo service delete endpoint payload.
+func NewDeletePayload(id int) *todo.DeletePayload {
+	v := &todo.DeletePayload{}
+	v.ID = id
+
+	return v
+}
+
 // ValidateCreateRequestBody runs the validations defined on CreateRequestBody
 func ValidateCreateRequestBody(body *CreateRequestBody) (err error) {
 	if body.Title == nil {

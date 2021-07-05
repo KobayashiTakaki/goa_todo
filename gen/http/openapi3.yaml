@@ -20,8 +20,8 @@ paths:
         schema:
           type: string
           description: Name
-          example: Qui ea aut labore vel est.
-        example: Repellendus cum pariatur.
+          example: Exercitationem recusandae natus molestiae mollitia autem aliquid.
+        example: Velit fugiat sint velit.
       responses:
         "200":
           description: OK response.
@@ -29,8 +29,8 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Quo at aut vero dolorem.
-              example: Dolor impedit officiis et repellat.
+                example: Velit sapiente voluptas vitae.
+              example: Incidunt ut id ad.
   /todo:
     post:
       tags:
@@ -52,8 +52,8 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Ex voluptatibus autem.
-              example: Exercitationem recusandae natus molestiae mollitia autem aliquid.
+                example: Qui ea aut labore vel est.
+              example: Accusantium iusto odit consectetur.
   /todo/{id}:
     get:
       tags:
@@ -68,9 +68,9 @@ paths:
         schema:
           type: integer
           description: ID
-          example: 3186684057996810352
+          example: 7006260920311031844
           format: int64
-        example: 7641188071616973852
+        example: 5096165957399080004
       responses:
         "200":
           description: OK response.
@@ -95,9 +95,9 @@ paths:
         schema:
           type: integer
           description: ID
-          example: 238078235876912336
+          example: 2574703810873729065
           format: int64
-        example: 4444182031962655905
+        example: 4072514244001839058
       requestBody:
         required: true
         content:
@@ -113,8 +113,34 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Omnis molestiae similique.
-              example: Sint velit.
+                example: Pariatur est dolor impedit officiis.
+              example: Illum at.
+  /todo/{id}/delete:
+    post:
+      tags:
+      - todo
+      summary: delete todo
+      operationId: todo#delete
+      parameters:
+      - name: id
+        in: path
+        description: ID
+        required: true
+        schema:
+          type: integer
+          description: ID
+          example: 3419246686277817111
+          format: int64
+        example: 7942520797027556032
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Repellat et voluptates.
+              example: Fugit placeat possimus quo temporibus dolores.
 components:
   schemas:
     CreateRequestBody:
@@ -123,9 +149,9 @@ components:
         title:
           type: string
           description: Title
-          example: Provident voluptates natus.
+          example: Autem molestias qui.
       example:
-        title: Quam voluptatem sit voluptatem officia est.
+        title: Omnis molestiae similique.
       required:
       - title
     Todo:
@@ -134,7 +160,7 @@ components:
         id:
           type: integer
           description: ID
-          example: 657734008950643814
+          example: 2102489054497879557
           format: int64
         is_done:
           type: boolean
@@ -143,11 +169,11 @@ components:
         title:
           type: string
           description: Title
-          example: Est error magni fugit ipsam itaque.
+          example: Voluptates ea provident voluptates natus eveniet quam.
       example:
-        id: 1569166430780697639
+        id: 6581644742103128896
         is_done: false
-        title: Voluptas vitae ex quas.
+        title: Officia est neque.
     UpdateRequestBody:
       type: object
       properties:

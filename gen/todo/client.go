@@ -19,15 +19,17 @@ type Client struct {
 	ShowEndpoint   goa.Endpoint
 	CreateEndpoint goa.Endpoint
 	UpdateEndpoint goa.Endpoint
+	DeleteEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "todo" service client given the endpoints.
-func NewClient(hello, show, create, update goa.Endpoint) *Client {
+func NewClient(hello, show, create, update, delete_ goa.Endpoint) *Client {
 	return &Client{
 		HelloEndpoint:  hello,
 		ShowEndpoint:   show,
 		CreateEndpoint: create,
 		UpdateEndpoint: update,
+		DeleteEndpoint: delete_,
 	}
 }
 
@@ -65,6 +67,16 @@ func (c *Client) Create(ctx context.Context, p *CreatePayload) (res string, err 
 func (c *Client) Update(ctx context.Context, p *UpdatePayload) (res string, err error) {
 	var ires interface{}
 	ires, err = c.UpdateEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(string), nil
+}
+
+// Delete calls the "delete" endpoint of the "todo" service.
+func (c *Client) Delete(ctx context.Context, p *DeletePayload) (res string, err error) {
+	var ires interface{}
+	ires, err = c.DeleteEndpoint(ctx, p)
 	if err != nil {
 		return
 	}

@@ -91,3 +91,22 @@ func BuildUpdatePayload(todoUpdateBody string, todoUpdateID string) (*todo.Updat
 
 	return v, nil
 }
+
+// BuildDeletePayload builds the payload for the todo delete endpoint from CLI
+// flags.
+func BuildDeletePayload(todoDeleteID string) (*todo.DeletePayload, error) {
+	var err error
+	var id int
+	{
+		var v int64
+		v, err = strconv.ParseInt(todoDeleteID, 10, 64)
+		id = int(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for id, must be INT")
+		}
+	}
+	v := &todo.DeletePayload{}
+	v.ID = id
+
+	return v, nil
+}

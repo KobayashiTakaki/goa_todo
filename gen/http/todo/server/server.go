@@ -23,6 +23,7 @@ type Server struct {
 	Show   http.Handler
 	Create http.Handler
 	Update http.Handler
+	Delete http.Handler
 }
 
 // ErrorNamer is an interface implemented by generated error structs that
@@ -62,11 +63,13 @@ func New(
 			{"Show", "GET", "/todo/{id}"},
 			{"Create", "POST", "/todo"},
 			{"Update", "POST", "/todo/{id}"},
+			{"Delete", "POST", "/todo/{id}/delete"},
 		},
 		Hello:  NewHelloHandler(e.Hello, mux, decoder, encoder, errhandler, formatter),
 		Show:   NewShowHandler(e.Show, mux, decoder, encoder, errhandler, formatter),
 		Create: NewCreateHandler(e.Create, mux, decoder, encoder, errhandler, formatter),
 		Update: NewUpdateHandler(e.Update, mux, decoder, encoder, errhandler, formatter),
+		Delete: NewDeleteHandler(e.Delete, mux, decoder, encoder, errhandler, formatter),
 	}
 }
 
@@ -79,6 +82,7 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.Show = m(s.Show)
 	s.Create = m(s.Create)
 	s.Update = m(s.Update)
+	s.Delete = m(s.Delete)
 }
 
 // Mount configures the mux to serve the todo endpoints.
@@ -87,6 +91,7 @@ func Mount(mux goahttp.Muxer, h *Server) {
 	MountShowHandler(mux, h.Show)
 	MountCreateHandler(mux, h.Create)
 	MountUpdateHandler(mux, h.Update)
+	MountDeleteHandler(mux, h.Delete)
 }
 
 // MountHelloHandler configures the mux to serve the "todo" service "hello"
@@ -272,6 +277,57 @@ func NewUpdateHandler(
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
 		ctx = context.WithValue(ctx, goa.MethodKey, "update")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "todo")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
+// MountDeleteHandler configures the mux to serve the "todo" service "delete"
+// endpoint.
+func MountDeleteHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := h.(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("POST", "/todo/{id}/delete", f)
+}
+
+// NewDeleteHandler creates a HTTP handler which loads the HTTP request and
+// calls the "todo" service "delete" endpoint.
+func NewDeleteHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeDeleteRequest(mux, decoder)
+		encodeResponse = EncodeDeleteResponse(encoder)
+		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "delete")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "todo")
 		payload, err := decodeRequest(r)
 		if err != nil {

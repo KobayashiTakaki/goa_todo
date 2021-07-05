@@ -43,3 +43,11 @@ func (s *Sql) Update(id int, is_done bool) (int, error) {
 	}
 	return int(id), nil
 }
+
+func (s *Sql) Delete(id int) (int, error) {
+	_, err := s.db.Exec("delete from todos where id = ?", id)
+	if err != nil {
+		return 0, err
+	}
+	return int(id), nil
+}

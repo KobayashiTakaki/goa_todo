@@ -97,6 +97,25 @@ paths:
             type: string
       schemes:
       - http
+  /todo/{id}/delete:
+    post:
+      tags:
+      - todo
+      summary: delete todo
+      operationId: todo#delete
+      parameters:
+      - name: id
+        in: path
+        description: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            type: string
+      schemes:
+      - http
 definitions:
   TodoCreateRequestBody:
     title: TodoCreateRequestBody
@@ -105,9 +124,9 @@ definitions:
       title:
         type: string
         description: Title
-        example: Officia consequatur consequatur.
+        example: At aut vero.
     example:
-      title: Dignissimos voluptas qui qui aut rerum.
+      title: Dolorum cupiditate est error magni fugit.
     required:
     - title
   TodoShowResponseBody:
@@ -117,21 +136,21 @@ definitions:
       id:
         type: integer
         description: ID
-        example: 5203683709039733097
+        example: 8248108353348145595
         format: int64
       is_done:
         type: boolean
         description: IsDone
-        example: true
+        example: false
       title:
         type: string
         description: Title
-        example: Voluptatem doloribus veniam quia exercitationem sit.
+        example: Molestiae molestias rem exercitationem vel officia consequatur.
     description: ShowResponseBody result type (default view)
     example:
-      id: 7436271080795579979
+      id: 4873149849987927710
       is_done: false
-      title: Quam molestiae molestias rem.
+      title: Voluptas qui qui aut rerum eos quia.
   TodoUpdateRequestBody:
     title: TodoUpdateRequestBody
     type: object
@@ -141,6 +160,6 @@ definitions:
         description: IsDone
         example: true
     example:
-      is_done: true
+      is_done: false
     required:
     - is_done

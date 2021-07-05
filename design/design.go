@@ -75,4 +75,16 @@ var _ = Service("todo", func() {
 			Response(StatusOK)
 		})
 	})
+
+	Method("delete", func() {
+		Payload(func() {
+			Attribute("id", Int, "ID")
+			Required("id")
+		})
+		Result(String)
+		HTTP(func() {
+			POST("/todo/{id}/delete")
+			Response(StatusOK)
+		})
+	})
 })

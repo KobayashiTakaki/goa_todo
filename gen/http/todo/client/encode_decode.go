@@ -287,3 +287,63 @@ func DecodeUpdateResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 		}
 	}
 }
+
+// BuildDeleteRequest instantiates a HTTP request object with method and path
+// set to call the "todo" service "delete" endpoint
+func (c *Client) BuildDeleteRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		id int
+	)
+	{
+		p, ok := v.(*todo.DeletePayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("todo", "delete", "*todo.DeletePayload", v)
+		}
+		id = p.ID
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: DeleteTodoPath(id)}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("todo", "delete", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// DecodeDeleteResponse returns a decoder for responses returned by the todo
+// delete endpoint. restoreBody controls whether the response body should be
+// restored after having been read.
+func DecodeDeleteResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body string
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("todo", "delete", err)
+			}
+			return body, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("todo", "delete", resp.StatusCode, string(body))
+		}
+	}
+}

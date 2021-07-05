@@ -53,3 +53,12 @@ func (s *todosrvc) Update(ctx context.Context, p *todo.UpdatePayload) (res strin
 	}
 	return fmt.Sprint(id), nil
 }
+
+func (s *todosrvc) Delete(ctx context.Context, p *todo.DeletePayload) (res string, err error) {
+	s.logger.Print("todo.delete")
+	id, err := s.db.Delete(p.ID)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprint(id), nil
+}

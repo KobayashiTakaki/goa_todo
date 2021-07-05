@@ -30,3 +30,8 @@ func CreateTodoPath() string {
 func UpdateTodoPath(id int) string {
 	return fmt.Sprintf("/todo/%v", id)
 }
+
+// DeleteTodoPath returns the URL path to the todo service delete HTTP endpoint.
+func DeleteTodoPath(id int) string {
+	return fmt.Sprintf("/todo/%v/delete", id)
+}
