@@ -23,13 +23,13 @@ import (
 //    command (subcommand1|subcommand2|...)
 //
 func UsageCommands() string {
-	return `todo (hello|show)
+	return `todo (hello|show|create)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
-	return os.Args[0] + ` todo hello --name "Totam aut iusto repudiandae facilis aut autem."` + "\n" +
+	return os.Args[0] + ` todo hello --name "Blanditiis iure voluptas."` + "\n" +
 		""
 }
 
@@ -50,10 +50,14 @@ func ParseEndpoint(
 
 		todoShowFlags  = flag.NewFlagSet("show", flag.ExitOnError)
 		todoShowIDFlag = todoShowFlags.String("id", "REQUIRED", "ID")
+
+		todoCreateFlags    = flag.NewFlagSet("create", flag.ExitOnError)
+		todoCreateBodyFlag = todoCreateFlags.String("body", "REQUIRED", "")
 	)
 	todoFlags.Usage = todoUsage
 	todoHelloFlags.Usage = todoHelloUsage
 	todoShowFlags.Usage = todoShowUsage
+	todoCreateFlags.Usage = todoCreateUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -95,6 +99,9 @@ func ParseEndpoint(
 			case "show":
 				epf = todoShowFlags
 
+			case "create":
+				epf = todoCreateFlags
+
 			}
 
 		}
@@ -126,6 +133,9 @@ func ParseEndpoint(
 			case "show":
 				endpoint = c.Show()
 				data, err = todoc.BuildShowPayload(*todoShowIDFlag)
+			case "create":
+				endpoint = c.Create()
+				data, err = todoc.BuildCreatePayload(*todoCreateBodyFlag)
 			}
 		}
 	}
@@ -145,6 +155,7 @@ Usage:
 COMMAND:
     hello: Hello implements hello.
     show: Show implements show.
+    create: Create implements create.
 
 Additional help:
     %s todo COMMAND --help
@@ -157,7 +168,7 @@ Hello implements hello.
     -name STRING: Name
 
 Example:
-    `+os.Args[0]+` todo hello --name "Totam aut iusto repudiandae facilis aut autem."
+    `+os.Args[0]+` todo hello --name "Blanditiis iure voluptas."
 `, os.Args[0])
 }
 
@@ -168,6 +179,19 @@ Show implements show.
     -id INT: ID
 
 Example:
-    `+os.Args[0]+` todo show --id 8463257927183265772
+    `+os.Args[0]+` todo show --id 151656195322834973
+`, os.Args[0])
+}
+
+func todoCreateUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] todo create -body JSON
+
+Create implements create.
+    -body JSON: 
+
+Example:
+    `+os.Args[0]+` todo create --body '{
+      "title": "Totam voluptatibus adipisci eos vel."
+   }'
 `, os.Args[0])
 }

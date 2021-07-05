@@ -32,6 +32,27 @@ paths:
             type: string
       schemes:
       - http
+  /todo:
+    post:
+      tags:
+      - todo
+      summary: create todo
+      operationId: todo#create
+      parameters:
+      - name: CreateRequestBody
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/TodoCreateRequestBody'
+          required:
+          - title
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            type: string
+      schemes:
+      - http
   /todo/{id}:
     get:
       tags:
@@ -52,6 +73,18 @@ paths:
       schemes:
       - http
 definitions:
+  TodoCreateRequestBody:
+    title: TodoCreateRequestBody
+    type: object
+    properties:
+      title:
+        type: string
+        description: Title
+        example: Nisi itaque eveniet.
+    example:
+      title: Aut ipsam et.
+    required:
+    - title
   TodoShowResponseBody:
     title: 'Mediatype identifier: todo; view=default'
     type: object
@@ -59,7 +92,7 @@ definitions:
       id:
         type: integer
         description: ID
-        example: 2838235209218037211
+        example: 7870470470687523658
         format: int64
       is_done:
         type: boolean
@@ -68,9 +101,9 @@ definitions:
       title:
         type: string
         description: Title
-        example: Voluptatem vel libero debitis.
+        example: Rerum enim.
     description: ShowResponseBody result type (default view)
     example:
-      id: 2368934434395686797
+      id: 4346809566106911910
       is_done: true
-      title: In praesentium totam voluptatibus adipisci eos vel.
+      title: Dolore corrupti.

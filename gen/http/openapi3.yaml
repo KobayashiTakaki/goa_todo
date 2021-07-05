@@ -20,8 +20,8 @@ paths:
         schema:
           type: string
           description: Name
-          example: Officia vero fugiat cumque.
-        example: Iure dolore.
+          example: Vel officia consequatur.
+        example: Enim dignissimos voluptas.
       responses:
         "200":
           description: OK response.
@@ -29,8 +29,31 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Ea ut voluptatum.
-              example: Est voluptatibus cum et quasi magni.
+                example: Officia vero fugiat cumque.
+              example: Qui aut rerum eos quia rem.
+  /todo:
+    post:
+      tags:
+      - todo
+      summary: create todo
+      operationId: todo#create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRequestBody'
+            example:
+              title: Totam voluptatibus adipisci eos vel.
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Quam molestiae molestias rem.
+              example: Vero dolorem dolorum cupiditate.
   /todo/{id}:
     get:
       tags:
@@ -45,9 +68,9 @@ paths:
         schema:
           type: integer
           description: ID
-          example: 5029119594382279781
+          example: 6093273818975291888
           format: int64
-        example: 3130548282279138188
+        example: 3842333107805527314
       responses:
         "200":
           description: OK response.
@@ -56,18 +79,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/Todo'
               example:
-                id: 151656195322834973
+                id: 7467274589012076417
                 is_done: true
-                title: Aperiam minima mollitia.
+                title: Non aperiam.
 components:
   schemas:
+    CreateRequestBody:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title
+          example: Illo voluptatem doloribus veniam quia.
+      example:
+        title: Sit porro et.
+      required:
+      - title
     Todo:
       type: object
       properties:
         id:
           type: integer
           description: ID
-          example: 4118086402290002102
+          example: 3635751475566220657
           format: int64
         is_done:
           type: boolean
@@ -76,11 +110,11 @@ components:
         title:
           type: string
           description: Title
-          example: Ea quia rerum enim cupiditate eaque nihil.
+          example: Dolore voluptatum est voluptatibus cum.
       example:
-        id: 7041713459340774230
-        is_done: true
-        title: Enim nisi itaque eveniet consequatur aut ipsam.
+        id: 3252658525105034485
+        is_done: false
+        title: Dolor quia et est.
 tags:
 - name: todo
   description: Service that manage todo.

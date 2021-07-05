@@ -21,6 +21,7 @@ type Server struct {
 	Mounts []*MountPoint
 	Hello  http.Handler
 	Show   http.Handler
+	Create http.Handler
 }
 
 // ErrorNamer is an interface implemented by generated error structs that
@@ -58,9 +59,11 @@ func New(
 		Mounts: []*MountPoint{
 			{"Hello", "GET", "/hello/{name}"},
 			{"Show", "GET", "/todo/{id}"},
+			{"Create", "POST", "/todo"},
 		},
-		Hello: NewHelloHandler(e.Hello, mux, decoder, encoder, errhandler, formatter),
-		Show:  NewShowHandler(e.Show, mux, decoder, encoder, errhandler, formatter),
+		Hello:  NewHelloHandler(e.Hello, mux, decoder, encoder, errhandler, formatter),
+		Show:   NewShowHandler(e.Show, mux, decoder, encoder, errhandler, formatter),
+		Create: NewCreateHandler(e.Create, mux, decoder, encoder, errhandler, formatter),
 	}
 }
 
@@ -71,12 +74,14 @@ func (s *Server) Service() string { return "todo" }
 func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.Hello = m(s.Hello)
 	s.Show = m(s.Show)
+	s.Create = m(s.Create)
 }
 
 // Mount configures the mux to serve the todo endpoints.
 func Mount(mux goahttp.Muxer, h *Server) {
 	MountHelloHandler(mux, h.Hello)
 	MountShowHandler(mux, h.Show)
+	MountCreateHandler(mux, h.Create)
 }
 
 // MountHelloHandler configures the mux to serve the "todo" service "hello"
@@ -160,6 +165,57 @@ func NewShowHandler(
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
 		ctx = context.WithValue(ctx, goa.MethodKey, "show")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "todo")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
+// MountCreateHandler configures the mux to serve the "todo" service "create"
+// endpoint.
+func MountCreateHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := h.(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("POST", "/todo", f)
+}
+
+// NewCreateHandler creates a HTTP handler which loads the HTTP request and
+// calls the "todo" service "create" endpoint.
+func NewCreateHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeCreateRequest(mux, decoder)
+		encodeResponse = EncodeCreateResponse(encoder)
+		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "create")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "todo")
 		payload, err := decodeRequest(r)
 		if err != nil {

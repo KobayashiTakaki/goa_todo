@@ -10,7 +10,16 @@ package server
 import (
 	todo "todo/gen/todo"
 	todoviews "todo/gen/todo/views"
+
+	goa "goa.design/goa/v3/pkg"
 )
+
+// CreateRequestBody is the type of the "todo" service "create" endpoint HTTP
+// request body.
+type CreateRequestBody struct {
+	// Title
+	Title *string `form:"title,omitempty" json:"title,omitempty" xml:"title,omitempty"`
+}
 
 // ShowResponseBody is the type of the "todo" service "show" endpoint HTTP
 // response body.
@@ -48,4 +57,21 @@ func NewShowPayload(id int) *todo.ShowPayload {
 	v.ID = id
 
 	return v
+}
+
+// NewCreatePayload builds a todo service create endpoint payload.
+func NewCreatePayload(body *CreateRequestBody) *todo.CreatePayload {
+	v := &todo.CreatePayload{
+		Title: *body.Title,
+	}
+
+	return v
+}
+
+// ValidateCreateRequestBody runs the validations defined on CreateRequestBody
+func ValidateCreateRequestBody(body *CreateRequestBody) (err error) {
+	if body.Title == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("title", "body"))
+	}
+	return
 }

@@ -8,8 +8,16 @@
 package client
 
 import (
+	todo "todo/gen/todo"
 	todoviews "todo/gen/todo/views"
 )
+
+// CreateRequestBody is the type of the "todo" service "create" endpoint HTTP
+// request body.
+type CreateRequestBody struct {
+	// Title
+	Title string `form:"title" json:"title" xml:"title"`
+}
 
 // ShowResponseBody is the type of the "todo" service "show" endpoint HTTP
 // response body.
@@ -20,6 +28,15 @@ type ShowResponseBody struct {
 	Title *string `form:"title,omitempty" json:"title,omitempty" xml:"title,omitempty"`
 	// IsDone
 	IsDone *bool `form:"is_done,omitempty" json:"is_done,omitempty" xml:"is_done,omitempty"`
+}
+
+// NewCreateRequestBody builds the HTTP request body from the payload of the
+// "create" endpoint of the "todo" service.
+func NewCreateRequestBody(p *todo.CreatePayload) *CreateRequestBody {
+	body := &CreateRequestBody{
+		Title: p.Title,
+	}
+	return body
 }
 
 // NewShowTodoOK builds a "todo" service "show" endpoint result from a HTTP

@@ -49,4 +49,16 @@ var _ = Service("todo", func() {
 			Response(StatusOK)
 		})
 	})
+
+	Method("create", func() {
+		Payload(func() {
+			Attribute("title", String, "Title")
+			Required("title")
+		})
+		Result(String)
+		HTTP(func() {
+			POST("/todo")
+			Response(StatusOK)
+		})
+	})
 })

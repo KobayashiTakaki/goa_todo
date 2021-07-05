@@ -23,3 +23,15 @@ func (s *Sql) Find(id int) (*todo.Todo, error) {
 	}
 	return &t, nil
 }
+
+func (s *Sql) Create(title string) (int, error) {
+	res, err := s.db.Exec("insert into todos (title) values (?)", title)
+	if err != nil {
+		return 0, err
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	return int(id), nil
+}

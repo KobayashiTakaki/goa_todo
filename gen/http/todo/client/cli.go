@@ -8,6 +8,7 @@
 package client
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	todo "todo/gen/todo"
@@ -41,6 +42,24 @@ func BuildShowPayload(todoShowID string) (*todo.ShowPayload, error) {
 	}
 	v := &todo.ShowPayload{}
 	v.ID = id
+
+	return v, nil
+}
+
+// BuildCreatePayload builds the payload for the todo create endpoint from CLI
+// flags.
+func BuildCreatePayload(todoCreateBody string) (*todo.CreatePayload, error) {
+	var err error
+	var body CreateRequestBody
+	{
+		err = json.Unmarshal([]byte(todoCreateBody), &body)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"title\": \"Totam voluptatibus adipisci eos vel.\"\n   }'")
+		}
+	}
+	v := &todo.CreatePayload{
+		Title: body.Title,
+	}
 
 	return v, nil
 }
