@@ -25,3 +25,8 @@ func ShowTodoPath(id int) string {
 func CreateTodoPath() string {
 	return "/todo"
 }
+
+// UpdateTodoPath returns the URL path to the todo service update HTTP endpoint.
+func UpdateTodoPath(id int) string {
+	return fmt.Sprintf("/todo/%v", id)
+}

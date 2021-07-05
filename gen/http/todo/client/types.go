@@ -19,6 +19,13 @@ type CreateRequestBody struct {
 	Title string `form:"title" json:"title" xml:"title"`
 }
 
+// UpdateRequestBody is the type of the "todo" service "update" endpoint HTTP
+// request body.
+type UpdateRequestBody struct {
+	// IsDone
+	IsDone bool `form:"is_done" json:"is_done" xml:"is_done"`
+}
+
 // ShowResponseBody is the type of the "todo" service "show" endpoint HTTP
 // response body.
 type ShowResponseBody struct {
@@ -35,6 +42,15 @@ type ShowResponseBody struct {
 func NewCreateRequestBody(p *todo.CreatePayload) *CreateRequestBody {
 	body := &CreateRequestBody{
 		Title: p.Title,
+	}
+	return body
+}
+
+// NewUpdateRequestBody builds the HTTP request body from the payload of the
+// "update" endpoint of the "todo" service.
+func NewUpdateRequestBody(p *todo.UpdatePayload) *UpdateRequestBody {
+	body := &UpdateRequestBody{
+		IsDone: p.IsDone,
 	}
 	return body
 }

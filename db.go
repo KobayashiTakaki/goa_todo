@@ -35,3 +35,11 @@ func (s *Sql) Create(title string) (int, error) {
 	}
 	return int(id), nil
 }
+
+func (s *Sql) Update(id int, is_done bool) (int, error) {
+	_, err := s.db.Exec("update todos set is_done = ? where id = ?", is_done, id)
+	if err != nil {
+		return 0, err
+	}
+	return int(id), nil
+}

@@ -72,6 +72,31 @@ paths:
             $ref: '#/definitions/TodoShowResponseBody'
       schemes:
       - http
+    post:
+      tags:
+      - todo
+      summary: update todo
+      operationId: todo#update
+      parameters:
+      - name: id
+        in: path
+        description: ID
+        required: true
+        type: integer
+      - name: UpdateRequestBody
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/TodoUpdateRequestBody'
+          required:
+          - is_done
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            type: string
+      schemes:
+      - http
 definitions:
   TodoCreateRequestBody:
     title: TodoCreateRequestBody
@@ -80,9 +105,9 @@ definitions:
       title:
         type: string
         description: Title
-        example: Nisi itaque eveniet.
+        example: Officia consequatur consequatur.
     example:
-      title: Aut ipsam et.
+      title: Dignissimos voluptas qui qui aut rerum.
     required:
     - title
   TodoShowResponseBody:
@@ -92,18 +117,30 @@ definitions:
       id:
         type: integer
         description: ID
-        example: 7870470470687523658
+        example: 5203683709039733097
         format: int64
       is_done:
         type: boolean
         description: IsDone
-        example: false
+        example: true
       title:
         type: string
         description: Title
-        example: Rerum enim.
+        example: Voluptatem doloribus veniam quia exercitationem sit.
     description: ShowResponseBody result type (default view)
     example:
-      id: 4346809566106911910
+      id: 7436271080795579979
+      is_done: false
+      title: Quam molestiae molestias rem.
+  TodoUpdateRequestBody:
+    title: TodoUpdateRequestBody
+    type: object
+    properties:
+      is_done:
+        type: boolean
+        description: IsDone
+        example: true
+    example:
       is_done: true
-      title: Dolore corrupti.
+    required:
+    - is_done

@@ -23,13 +23,13 @@ import (
 //    command (subcommand1|subcommand2|...)
 //
 func UsageCommands() string {
-	return `todo (hello|show|create)
+	return `todo (hello|show|create|update)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
-	return os.Args[0] + ` todo hello --name "Blanditiis iure voluptas."` + "\n" +
+	return os.Args[0] + ` todo hello --name "Minima mollitia accusantium ut quis voluptatem vel."` + "\n" +
 		""
 }
 
@@ -53,11 +53,16 @@ func ParseEndpoint(
 
 		todoCreateFlags    = flag.NewFlagSet("create", flag.ExitOnError)
 		todoCreateBodyFlag = todoCreateFlags.String("body", "REQUIRED", "")
+
+		todoUpdateFlags    = flag.NewFlagSet("update", flag.ExitOnError)
+		todoUpdateBodyFlag = todoUpdateFlags.String("body", "REQUIRED", "")
+		todoUpdateIDFlag   = todoUpdateFlags.String("id", "REQUIRED", "ID")
 	)
 	todoFlags.Usage = todoUsage
 	todoHelloFlags.Usage = todoHelloUsage
 	todoShowFlags.Usage = todoShowUsage
 	todoCreateFlags.Usage = todoCreateUsage
+	todoUpdateFlags.Usage = todoUpdateUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -102,6 +107,9 @@ func ParseEndpoint(
 			case "create":
 				epf = todoCreateFlags
 
+			case "update":
+				epf = todoUpdateFlags
+
 			}
 
 		}
@@ -136,6 +144,9 @@ func ParseEndpoint(
 			case "create":
 				endpoint = c.Create()
 				data, err = todoc.BuildCreatePayload(*todoCreateBodyFlag)
+			case "update":
+				endpoint = c.Update()
+				data, err = todoc.BuildUpdatePayload(*todoUpdateBodyFlag, *todoUpdateIDFlag)
 			}
 		}
 	}
@@ -156,6 +167,7 @@ COMMAND:
     hello: Hello implements hello.
     show: Show implements show.
     create: Create implements create.
+    update: Update implements update.
 
 Additional help:
     %s todo COMMAND --help
@@ -168,7 +180,7 @@ Hello implements hello.
     -name STRING: Name
 
 Example:
-    `+os.Args[0]+` todo hello --name "Blanditiis iure voluptas."
+    `+os.Args[0]+` todo hello --name "Minima mollitia accusantium ut quis voluptatem vel."
 `, os.Args[0])
 }
 
@@ -179,7 +191,7 @@ Show implements show.
     -id INT: ID
 
 Example:
-    `+os.Args[0]+` todo show --id 151656195322834973
+    `+os.Args[0]+` todo show --id 8048501117607857933
 `, os.Args[0])
 }
 
@@ -191,7 +203,21 @@ Create implements create.
 
 Example:
     `+os.Args[0]+` todo create --body '{
-      "title": "Totam voluptatibus adipisci eos vel."
+      "title": "Corrupti odit enim nisi itaque eveniet."
    }'
+`, os.Args[0])
+}
+
+func todoUpdateUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] todo update -body JSON -id INT
+
+Update implements update.
+    -body JSON: 
+    -id INT: ID
+
+Example:
+    `+os.Args[0]+` todo update --body '{
+      "is_done": false
+   }' --id 146787194492660721
 `, os.Args[0])
 }

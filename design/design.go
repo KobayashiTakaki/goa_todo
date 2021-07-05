@@ -61,4 +61,18 @@ var _ = Service("todo", func() {
 			Response(StatusOK)
 		})
 	})
+
+	Method("update", func() {
+		Payload(func() {
+			Attribute("id", Int, "ID")
+			Attribute("is_done", Boolean, "IsDone")
+			Required("id")
+			Required("is_done")
+		})
+		Result(String)
+		HTTP(func() {
+			POST("/todo/{id}")
+			Response(StatusOK)
+		})
+	})
 })

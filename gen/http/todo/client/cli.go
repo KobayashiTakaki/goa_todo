@@ -54,12 +54,40 @@ func BuildCreatePayload(todoCreateBody string) (*todo.CreatePayload, error) {
 	{
 		err = json.Unmarshal([]byte(todoCreateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"title\": \"Totam voluptatibus adipisci eos vel.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"title\": \"Corrupti odit enim nisi itaque eveniet.\"\n   }'")
 		}
 	}
 	v := &todo.CreatePayload{
 		Title: body.Title,
 	}
+
+	return v, nil
+}
+
+// BuildUpdatePayload builds the payload for the todo update endpoint from CLI
+// flags.
+func BuildUpdatePayload(todoUpdateBody string, todoUpdateID string) (*todo.UpdatePayload, error) {
+	var err error
+	var body UpdateRequestBody
+	{
+		err = json.Unmarshal([]byte(todoUpdateBody), &body)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"is_done\": false\n   }'")
+		}
+	}
+	var id int
+	{
+		var v int64
+		v, err = strconv.ParseInt(todoUpdateID, 10, 64)
+		id = int(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for id, must be INT")
+		}
+	}
+	v := &todo.UpdatePayload{
+		IsDone: body.IsDone,
+	}
+	v.ID = id
 
 	return v, nil
 }

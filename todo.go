@@ -44,3 +44,12 @@ func (s *todosrvc) Create(ctx context.Context, p *todo.CreatePayload) (res strin
 	}
 	return fmt.Sprint(id), nil
 }
+
+func (s *todosrvc) Update(ctx context.Context, p *todo.UpdatePayload) (res string, err error) {
+	s.logger.Print("todo.update")
+	id, err := s.db.Update(p.ID, p.IsDone)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprint(id), nil
+}

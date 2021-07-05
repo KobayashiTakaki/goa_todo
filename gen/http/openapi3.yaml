@@ -20,8 +20,8 @@ paths:
         schema:
           type: string
           description: Name
-          example: Vel officia consequatur.
-        example: Enim dignissimos voluptas.
+          example: Qui ea aut labore vel est.
+        example: Repellendus cum pariatur.
       responses:
         "200":
           description: OK response.
@@ -29,8 +29,8 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Officia vero fugiat cumque.
-              example: Qui aut rerum eos quia rem.
+                example: Quo at aut vero dolorem.
+              example: Dolor impedit officiis et repellat.
   /todo:
     post:
       tags:
@@ -44,7 +44,7 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateRequestBody'
             example:
-              title: Totam voluptatibus adipisci eos vel.
+              title: Corrupti odit enim nisi itaque eveniet.
       responses:
         "200":
           description: OK response.
@@ -52,8 +52,8 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Quam molestiae molestias rem.
-              example: Vero dolorem dolorum cupiditate.
+                example: Ex voluptatibus autem.
+              example: Exercitationem recusandae natus molestiae mollitia autem aliquid.
   /todo/{id}:
     get:
       tags:
@@ -68,9 +68,9 @@ paths:
         schema:
           type: integer
           description: ID
-          example: 6093273818975291888
+          example: 3186684057996810352
           format: int64
-        example: 3842333107805527314
+        example: 7641188071616973852
       responses:
         "200":
           description: OK response.
@@ -79,9 +79,42 @@ paths:
               schema:
                 $ref: '#/components/schemas/Todo'
               example:
-                id: 7467274589012076417
-                is_done: true
-                title: Non aperiam.
+                id: 4180047692902679739
+                is_done: false
+                title: Enim cupiditate eaque.
+    post:
+      tags:
+      - todo
+      summary: update todo
+      operationId: todo#update
+      parameters:
+      - name: id
+        in: path
+        description: ID
+        required: true
+        schema:
+          type: integer
+          description: ID
+          example: 238078235876912336
+          format: int64
+        example: 4444182031962655905
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRequestBody'
+            example:
+              is_done: false
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Omnis molestiae similique.
+              example: Sint velit.
 components:
   schemas:
     CreateRequestBody:
@@ -90,9 +123,9 @@ components:
         title:
           type: string
           description: Title
-          example: Illo voluptatem doloribus veniam quia.
+          example: Provident voluptates natus.
       example:
-        title: Sit porro et.
+        title: Quam voluptatem sit voluptatem officia est.
       required:
       - title
     Todo:
@@ -101,20 +134,31 @@ components:
         id:
           type: integer
           description: ID
-          example: 3635751475566220657
+          example: 657734008950643814
           format: int64
         is_done:
           type: boolean
           description: IsDone
-          example: true
+          example: false
         title:
           type: string
           description: Title
-          example: Dolore voluptatum est voluptatibus cum.
+          example: Est error magni fugit ipsam itaque.
       example:
-        id: 3252658525105034485
+        id: 1569166430780697639
         is_done: false
-        title: Dolor quia et est.
+        title: Voluptas vitae ex quas.
+    UpdateRequestBody:
+      type: object
+      properties:
+        is_done:
+          type: boolean
+          description: IsDone
+          example: false
+      example:
+        is_done: true
+      required:
+      - is_done
 tags:
 - name: todo
   description: Service that manage todo.

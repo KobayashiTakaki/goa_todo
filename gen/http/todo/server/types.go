@@ -21,6 +21,13 @@ type CreateRequestBody struct {
 	Title *string `form:"title,omitempty" json:"title,omitempty" xml:"title,omitempty"`
 }
 
+// UpdateRequestBody is the type of the "todo" service "update" endpoint HTTP
+// request body.
+type UpdateRequestBody struct {
+	// IsDone
+	IsDone *bool `form:"is_done,omitempty" json:"is_done,omitempty" xml:"is_done,omitempty"`
+}
+
 // ShowResponseBody is the type of the "todo" service "show" endpoint HTTP
 // response body.
 type ShowResponseBody struct {
@@ -68,10 +75,28 @@ func NewCreatePayload(body *CreateRequestBody) *todo.CreatePayload {
 	return v
 }
 
+// NewUpdatePayload builds a todo service update endpoint payload.
+func NewUpdatePayload(body *UpdateRequestBody, id int) *todo.UpdatePayload {
+	v := &todo.UpdatePayload{
+		IsDone: *body.IsDone,
+	}
+	v.ID = id
+
+	return v
+}
+
 // ValidateCreateRequestBody runs the validations defined on CreateRequestBody
 func ValidateCreateRequestBody(body *CreateRequestBody) (err error) {
 	if body.Title == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("title", "body"))
+	}
+	return
+}
+
+// ValidateUpdateRequestBody runs the validations defined on UpdateRequestBody
+func ValidateUpdateRequestBody(body *UpdateRequestBody) (err error) {
+	if body.IsDone == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("is_done", "body"))
 	}
 	return
 }
