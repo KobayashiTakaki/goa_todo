@@ -10,6 +10,20 @@ var _ = API("todo", func() {
 	})
 })
 
+var Todo = ResultType("Todo", func() {
+	Attributes(func() {
+		Attribute("id", Int, "ID")
+		Attribute("title", String, "Title")
+		Attribute("is_done", Boolean, "IsDone")
+	})
+
+	View("default", func() {
+		Attribute("id")
+		Attribute("title")
+		Attribute("is_done")
+	})
+})
+
 var _ = Service("todo", func() {
 	Description("Service that manage todo.")
 	Method("hello", func() {
@@ -20,6 +34,18 @@ var _ = Service("todo", func() {
 		Result(String)
 		HTTP(func() {
 			GET("/hello/{name}")
+			Response(StatusOK)
+		})
+	})
+
+	Method("show", func() {
+		Payload(func() {
+			Attribute("id", Int, "ID")
+			Required("id")
+		})
+		Result(Todo)
+		HTTP(func() {
+			GET("/todo/{id}")
 			Response(StatusOK)
 		})
 	})

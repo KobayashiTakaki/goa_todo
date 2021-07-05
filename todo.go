@@ -26,3 +26,12 @@ func (s *todosrvc) Hello(ctx context.Context, p *todo.HelloPayload) (res string,
 	s.logger.Print("todo.hello")
 	return fmt.Sprintf("Hello, %v!", p.Name), nil
 }
+
+func (s *todosrvc) Show(ctx context.Context, p *todo.ShowPayload) (res *todo.Todo, err error) {
+	s.logger.Print("todo.show")
+	t, err := s.db.Find(p.ID)
+	if err != nil {
+		return nil, err
+	}
+	return t, nil
+}

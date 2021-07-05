@@ -32,3 +32,45 @@ paths:
             type: string
       schemes:
       - http
+  /todo/{id}:
+    get:
+      tags:
+      - todo
+      summary: show todo
+      operationId: todo#show
+      parameters:
+      - name: id
+        in: path
+        description: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/TodoShowResponseBody'
+      schemes:
+      - http
+definitions:
+  TodoShowResponseBody:
+    title: 'Mediatype identifier: todo; view=default'
+    type: object
+    properties:
+      id:
+        type: integer
+        description: ID
+        example: 2838235209218037211
+        format: int64
+      is_done:
+        type: boolean
+        description: IsDone
+        example: false
+      title:
+        type: string
+        description: Title
+        example: Voluptatem vel libero debitis.
+    description: ShowResponseBody result type (default view)
+    example:
+      id: 2368934434395686797
+      is_done: true
+      title: In praesentium totam voluptatibus adipisci eos vel.

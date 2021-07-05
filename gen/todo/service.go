@@ -9,12 +9,15 @@ package todo
 
 import (
 	"context"
+	todoviews "todo/gen/todo/views"
 )
 
 // Service that manage todo.
 type Service interface {
 	// Hello implements hello.
 	Hello(context.Context, *HelloPayload) (res string, err error)
+	// Show implements show.
+	Show(context.Context, *ShowPayload) (res *Todo, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -25,10 +28,59 @@ const ServiceName = "todo"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [1]string{"hello"}
+var MethodNames = [2]string{"hello", "show"}
 
 // HelloPayload is the payload type of the todo service hello method.
 type HelloPayload struct {
 	// Name
 	Name string
+}
+
+// ShowPayload is the payload type of the todo service show method.
+type ShowPayload struct {
+	// ID
+	ID int
+}
+
+// Todo is the result type of the todo service show method.
+type Todo struct {
+	// ID
+	ID *int
+	// Title
+	Title *string
+	// IsDone
+	IsDone *bool
+}
+
+// NewTodo initializes result type Todo from viewed result type Todo.
+func NewTodo(vres *todoviews.Todo) *Todo {
+	return newTodo(vres.Projected)
+}
+
+// NewViewedTodo initializes viewed result type Todo from result type Todo
+// using the given view.
+func NewViewedTodo(res *Todo, view string) *todoviews.Todo {
+	p := newTodoView(res)
+	return &todoviews.Todo{Projected: p, View: "default"}
+}
+
+// newTodo converts projected type Todo to service type Todo.
+func newTodo(vres *todoviews.TodoView) *Todo {
+	res := &Todo{
+		ID:     vres.ID,
+		Title:  vres.Title,
+		IsDone: vres.IsDone,
+	}
+	return res
+}
+
+// newTodoView projects result type Todo to projected type TodoView using the
+// "default" view.
+func newTodoView(res *Todo) *todoviews.TodoView {
+	vres := &todoviews.TodoView{
+		ID:     res.ID,
+		Title:  res.Title,
+		IsDone: res.IsDone,
+	}
+	return vres
 }
