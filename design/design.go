@@ -16,12 +16,6 @@ var Todo = ResultType("Todo", func() {
 		Attribute("title", String, "Title")
 		Attribute("is_done", Boolean, "IsDone")
 	})
-
-	View("default", func() {
-		Attribute("id")
-		Attribute("title")
-		Attribute("is_done")
-	})
 })
 
 var _ = Service("todo", func() {
